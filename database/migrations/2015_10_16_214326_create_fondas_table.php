@@ -19,6 +19,7 @@ class CreateFondasTable extends Migration
             $table->integer('postalcode');
             $table->string('schedules');
             $table->timestamps();
+
         });
     }
 
