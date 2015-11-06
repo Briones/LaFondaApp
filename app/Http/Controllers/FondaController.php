@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Fondas;
+use App\Fonda;
 
-class FondasController extends Controller
+class FondaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,11 +16,11 @@ class FondasController extends Controller
      */
     public function index()
     {
-        $url = Fondas::get();
+        $fondas = Fonda::get();
 
         return response()->json(array(
             'error' => false,
-            'fondas' => $url->toArray()),
+            'fondas' => $fondas->toArray()),
             200
         );
     }
@@ -43,7 +43,21 @@ class FondasController extends Controller
      */
     public function store(Request $request)
     {
+        $fonda = new Fonda();
+        $fonda->name="El Nombre";
+        $fonda->address= "La direccion";
+        $fonda->postalcode="06500";
+        $fonda->schedules="Horario de 10 a 4 am";
+        $fonda->created_at=time();
+        $fonda->updated_at=time();
 
+        $fonda->save();
+
+        return response()->json(array(
+            'error' => false,
+            'fonda' => $fonda->toArray()),
+            200
+        );
     }
 
     /**
@@ -54,11 +68,11 @@ class FondasController extends Controller
      */
     public function show($id)
     {
-        $url = Fondas::where('id', $id)->get();
+        $fondas = Fonda::where('id', $id)->get();
 
         return response()->json(array(
             'error' => false,
-            'fondas' => $url->toArray()),
+            'fondas' => $fondas->toArray()),
             200
         );
     }

@@ -16,6 +16,7 @@ Route::get('/', function () {
 });
 
 Route::group(['prefix' => 'v1'], function () {
-    Route::Resource('fondas', 'FondasController');
+    Route::Resource('fondas', 'FondaController');
+    //Route::Resource('users', 'UserController');
 
 });
