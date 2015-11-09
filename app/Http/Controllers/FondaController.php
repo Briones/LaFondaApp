@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Fonda;
+use Mockery\CountValidator\Exception;
 
 class FondaController extends Controller
 {
@@ -16,13 +17,23 @@ class FondaController extends Controller
      */
     public function index()
     {
-        $fondas = Fonda::get();
-
-        return response()->json(array(
-            'error' => false,
-            'fondas' => $fondas->toArray()),
-            200
-        );
+        try {
+            $error = false;
+            $statusCode = 200;
+            $fondas = Fonda::get();
+            if(empty($fondas)){
+                throw new Exception();
+            }
+        }catch (Exception $e){
+            $error = true;
+            $statusCode = 400;
+        }finally {
+            return response()->json(array(
+                'error' => $error,
+                'fondas' => $fondas->toArray()),
+                $statusCode
+            );
+        }
     }
 
     /**
@@ -44,10 +55,10 @@ class FondaController extends Controller
     public function store(Request $request)
     {
         $fonda = new Fonda();
-        $fonda->name="El Nombre";
-        $fonda->address= "La direccion";
-        $fonda->postalcode="06500";
-        $fonda->schedules="Horario de 10 a 4 am";
+        $fonda->name= $request->get('name');
+        $fonda->address= $request->get('address');
+        $fonda->postalcode= $request->get('postalcode');
+        $fonda->schedules= $request->get('schedules');
         $fonda->created_at=time();
         $fonda->updated_at=time();
 
@@ -68,13 +79,24 @@ class FondaController extends Controller
      */
     public function show($id)
     {
-        $fondas = Fonda::where('id', $id)->get();
-
-        return response()->json(array(
-            'error' => false,
-            'fondas' => $fondas->toArray()),
-            200
-        );
+        try {
+            $fondas = null;
+            $error = false;
+            $statusCode = 200;
+            $fondas = Fonda::where('id', $id)->get();
+            if($fondas->isEmpty()){
+                throw new Exception();
+            }
+        }catch (Exception $e){
+            $error = true;
+            $statusCode = 404;
+        }finally {
+            return response()->json(array(
+                'error' => $error,
+                'fondas' => $fondas?$fondas->toArray():$fondas),
+                $statusCode
+            );
+        }
     }
 
     /**
